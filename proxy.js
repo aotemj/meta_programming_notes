@@ -9,19 +9,60 @@
 // p.a = 1
 // console.log(p.a, p.b) // 1, 42
 
-let handler = {
-    get: function (target, name) {
-        return name in target ? target[name] : 42
+{
+    let handler = {
+        get: function (target, name) {
+            // return name in target ? target[name] : 42
+            if (target.hasOwnProperty(name)) {
+                return target[name]
+            } else {
+                console.error('没有找到对应的属性')
+                return
+            }
+        },
+        set: function (target, name, value) {
+            target[name] = `prefix-${value}-suffix`
+        }
     }
+
+
+    let p = new Proxy({}, handler)
+
+    p.a = 1
+
+    console.log(p.a)
+    delete p.a
+    console.log(p.b)
 }
 
 
-let p = new Proxy({}, handler)
+{
+    var person = {
+        name: 'zhangsan',
+    }
 
-p.a = 1
+    var proxy = new Proxy(person, {
+        get: function (target, proxpKey) {
+            if (propKey in target) {
+                return target[propKey]
+            } else {
+                throw new ReferenceError("prop name ")
+            }
+        }
+    })
 
-console.log(p.a, p.b);
+}
 
+{
+    let proto = new Proxy({}, {
+        get: function (target, propertyKey, receiver) {
+            console.log(`GET${propertyKey}`)
+            return target[propertyKey]
+        }
+    })
 
+    let obj = Object.create(proto)
+    obj.foo
+}
 
 
